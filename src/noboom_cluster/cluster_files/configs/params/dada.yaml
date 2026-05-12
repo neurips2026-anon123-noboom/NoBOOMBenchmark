@@ -1,0 +1,10 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        copies:
+          distribution: categorical
+          choices: [10]
+  window_size:
+    distribution: categorical
+    choices: [100]

@@ -1,0 +1,22 @@
+search_space:
+  model:
+    network:
+      init_args:
+        hidden_dims:
+          distribution: categorical
+          choices:
+            - [8]
+        latent_dim:
+          distribution: categorical
+          choices: [4]
+        dropout:
+          distribution: categorical
+          choices: [0.0]
+    optimizer:
+      init_args:
+        lr:
+          distribution: categorical
+          choices: [1.0e-3]
+  window_size:
+    distribution: categorical
+    choices: [16]

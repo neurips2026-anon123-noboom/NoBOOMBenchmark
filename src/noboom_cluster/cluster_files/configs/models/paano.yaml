@@ -1,0 +1,62 @@
+model:
+  predict_on_end: true
+  prediction_stream:
+    class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.prediction_stream.PatchPointDelayPredictionStream
+    init_args:
+      chunk_size: 32768
+  compile_torch_model: false
+  compile_torch_model_mode: default
+  compile_torch_model_fullgraph: false
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.paano.PaAno
+    init_args:
+      input_dim: null
+      patch_size: null
+      stride: 1
+      layers: [128, 256, 128, 64]
+      kernel_sizes: [7, 5, 3, 3]
+      projection_dim: 256
+      use_revin: true
+      random_seed: 2027
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.paano.PaAnoAnomalyDetector
+    init_args:
+      patch_size: null
+      stride: 1
+      batch_size: 128
+      memory_bank_ratio: 0.1
+      top_k: 3
+      use_revin: true
+      random_seed: 2027
+  losses:
+    class_path: noboom_benchmark.noboom_lib.core.models.paano.PaAnoLoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1.0e-4
+trainer:
+  precision: bf16-mixed
+  max_steps: 200
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  val_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  test_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: false

@@ -1,0 +1,18 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        n_bins:
+          distribution: categorical
+          choices: [5, 10, 20, 50]
+        alpha:
+          distribution: categorical
+          choices: [0.01, 0.1, 0.2]
+        bin_tol:
+          distribution: categorical
+          choices: [0.25, 0.5, 0.75]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

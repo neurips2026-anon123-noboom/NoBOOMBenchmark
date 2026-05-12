@@ -1,0 +1,34 @@
+model:
+  compile_torch_model: True
+  #TODO: fix max-autotune compilation issue
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: False
+  network:
+    class_path: timesead.models.generative.GRUGMMVAE
+    init_args:
+      input_dim: null
+      gru_hidden_dims: [60]
+      latent_dim: 8
+      gmm_components: 2
+  detector:
+    class_path: timesead.models.generative.GMMVAEAnomalyDetector
+    init_args:
+        num_mc_samples: 1
+  losses:
+    class_path: timesead.models.generative.GMMVAELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: 32
+data:
+  batch_dim: 1
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True
+

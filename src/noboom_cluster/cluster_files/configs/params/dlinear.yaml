@@ -1,0 +1,19 @@
+search_space:
+  model:
+    network:
+      init_args:
+        moving_avg:
+          distribution: categorical
+          choices: [9, 25]
+        individual:
+          distribution: categorical
+          choices: [false]
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [64, 96, 128]

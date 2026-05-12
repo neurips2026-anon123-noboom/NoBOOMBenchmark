@@ -1,0 +1,22 @@
+search_space:
+  model:
+    network:
+      hidden_dimensions:
+        distribution: categorical
+        choices: [ [ 50 ], [ 50, 50 ], [ 50, 50, 50 ], [ 50, 50, 50, 50 ] ]
+      dropout:
+        distribution: uniform
+        low: 0.0
+        high: 0.5
+        step: 0.1
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

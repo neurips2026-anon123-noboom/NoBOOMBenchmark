@@ -1,0 +1,17 @@
+search_space:
+  model:
+    network:
+      order:
+        distribution: int
+        low: 1
+        high: 4
+        step: 1
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-1
+  window_size:
+    distribution: categorical
+    choices: [16, 32, 64, 96, 128]

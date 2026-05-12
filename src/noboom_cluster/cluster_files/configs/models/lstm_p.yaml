@@ -1,0 +1,41 @@
+model:
+  compile_torch_model: False
+  network:
+    class_path: timesead.models.prediction.LSTMPrediction
+    init_args:
+      input_dim: null
+      lstm_hidden_dims: [50, 30]
+      linear_hidden_layers: [40]
+      prediction_horizon: ${prediction_horizon}
+  detector:
+    class_path: timesead.models.prediction.LSTMPredictionAnomalyDetector
+  losses:
+    class_path: torch.nn.MSELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+
+prediction_horizon: 3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 1
+  train_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  val_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  test_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: False
+        prediction_horizon: ${prediction_horizon}

@@ -1,0 +1,14 @@
+model:
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.detectors.OCSVMAD
+    init_args:
+      kernel: rbf
+      gamma: scale
+      nu: 0.1
+      normalize: true
+trainer:
+  accelerator: cpu
+  max_epochs: 0
+
+data:
+  batch_dim: 0

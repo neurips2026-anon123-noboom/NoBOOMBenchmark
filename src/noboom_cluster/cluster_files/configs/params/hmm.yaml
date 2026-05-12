@@ -1,0 +1,18 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        n_components:
+          distribution: categorical
+          choices: [2, 4, 8, 16]
+        covariance_type:
+          distribution: categorical
+          choices: ["diag", "full"]
+        n_iter:
+          distribution: categorical
+          choices: [50, 100]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

@@ -1,0 +1,19 @@
+model:
+  predict_on_end: True
+  prediction_stream:
+    class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.prediction_stream.WindowAtomicPredictionStream
+    init_args:
+      chunk_size: 8192
+  detector:
+    class_path: timesead.models.baselines.eif.EIFAD
+    init_args:
+      n_trees: 200
+      sample_size: "auto"
+      n_jobs: 4
+      verbose: 1
+      parallel_predict: True
+trainer:
+  accelerator: cpu
+
+data:
+  batch_dim: 0

@@ -1,0 +1,61 @@
+model:
+  label_index_offset: 1
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.kan_ad.KANAD
+    init_args:
+      window_size: null
+      input_dim: null
+      order: 2
+      prediction_horizon: ${prediction_horizon}
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.kan_ad.KANADAnomalyDetector
+  losses:
+    class_path: torch.nn.MSELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 0.01
+
+  compile_torch_model: false
+  compile_torch_model_mode: default
+  compile_torch_model_fullgraph: false
+prediction_horizon: 1
+trainer:
+  precision: bf16-mixed
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.ModelSummary
+      init_args:
+        max_depth: -1
+    - class_path: lightning.pytorch.callbacks.EarlyStopping
+      init_args:
+        monitor: val_loss
+        patience: 3
+        min_delta: 1e-4
+        mode: min
+    - class_path: lightning.pytorch.callbacks.LearningRateMonitor
+data:
+  batch_dim: 1
+  batch_size: 128
+  predict_batch_size: 64
+  predict_num_workers: 0
+  train_transform:
+    - class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.noboom_transforms.FirstOrderDifferenceTransform
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  val_transform:
+    - class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.noboom_transforms.FirstOrderDifferenceTransform
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  test_transform:
+    - class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.noboom_transforms.FirstOrderDifferenceTransform
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: False
+        prediction_horizon: ${prediction_horizon}

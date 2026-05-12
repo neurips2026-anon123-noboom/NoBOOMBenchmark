@@ -1,0 +1,8 @@
+# Opt-in TPU overlay. Merge after configs/models/common.yaml and the selected
+# model config; default CPU/GPU configs do not read this directory.
+trainer:
+  accelerator: tpu
+  devices: auto
+  precision: bf16-mixed
+data:
+  num_workers: 0

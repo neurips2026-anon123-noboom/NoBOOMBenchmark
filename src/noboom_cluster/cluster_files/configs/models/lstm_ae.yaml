@@ -1,0 +1,27 @@
+model:
+  compile_torch_model: False
+  network:
+    class_path: timesead.models.reconstruction.LSTMAEMalhotra2016
+    init_args:
+      input_dimension: null
+      hidden_dimensions: [50]
+  detector:
+    class_path: timesead.models.reconstruction.LSTMAEAnomalyDetector
+  losses:
+    class_path: torch.nn.MSELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 1
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True
+

@@ -1,0 +1,24 @@
+search_space:
+  model:
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+    network:
+      dropout:
+        distribution: uniform
+        low: 0.0
+        high: 0.5
+      lstm_hidden_dims:
+        distribution: categorical
+        choices: [[64], [64, 64], [128], [256], [256, 128], [128, 64, 32], [128, 128, 128], [256, 128, 64], [256, 256, 128], [256, 224, 192, 160], [128, 128, 128, 128]]
+      linear_hidden_layers:
+        distribution: categorical
+        choices: [[64], [64, 64], [128], [256], [256, 128], [128, 64, 32], [128, 128, 128], [256, 128, 64], [256, 256, 128], [256, 224, 192, 160], [128, 128, 128, 128]]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

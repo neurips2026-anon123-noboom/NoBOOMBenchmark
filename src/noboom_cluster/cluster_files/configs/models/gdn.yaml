@@ -1,0 +1,44 @@
+model:
+  compile_torch_model: False
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: False
+  network:
+    class_path: timesead.models.prediction.GDN
+    init_args:
+      input_dim: null
+      dim: 64
+      out_layer_hidden_dims: [64]
+      topk: 15
+      dropout_prob: 0.2
+  detector:
+    class_path: timesead.models.prediction.GDNAnomalyDetector
+  losses:
+    class_path: torch.nn.MSELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+
+prediction_horizon: 1
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  val_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: True
+        prediction_horizon: ${prediction_horizon}
+  test_transform:
+    - class_path: timesead.data.transforms.PredictionTargetTransform
+      init_args:
+        window_size: null
+        replace_labels: False
+        prediction_horizon: ${prediction_horizon}

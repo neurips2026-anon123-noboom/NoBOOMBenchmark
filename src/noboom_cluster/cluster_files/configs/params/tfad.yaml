@@ -1,0 +1,29 @@
+search_space:
+  model:
+    network:
+      init_args:
+        embedding_rep_dim:
+          distribution: categorical
+          choices: [32, 64]
+        tcn_kernel_size:
+          distribution: categorical
+          choices: [5, 7]
+        tcn_layers:
+          distribution: int
+          low: 2
+          high: 3
+          step: 1
+        dropout:
+          distribution: uniform
+          low: 0.0
+          high: 0.2
+          step: 0.1
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [64, 96, 128]

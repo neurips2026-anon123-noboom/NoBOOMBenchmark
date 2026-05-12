@@ -1,0 +1,12 @@
+model:
+  detector:
+    class_path: timesead.models.baselines.kmeans.KMeansAD
+    init_args:
+      k: 20
+      batch_size: null
+trainer:
+  precision: 32
+  accelerator: cpu
+
+data:
+  batch_dim: 0

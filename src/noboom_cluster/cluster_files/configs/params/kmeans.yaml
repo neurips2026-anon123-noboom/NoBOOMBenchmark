@@ -1,0 +1,13 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        k:
+          distribution: int
+          low: 2
+          high: 30
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

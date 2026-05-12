@@ -1,0 +1,7 @@
+# Opt-in smoke-size HPO overlay for TPU validation only. Merge after
+# configs/params/common.yaml and the selected model params.
+study:
+  n_trials: 1
+  hpo_seeds: [42]
+  final_eval_after_hpo: false
+  seeds: [42]

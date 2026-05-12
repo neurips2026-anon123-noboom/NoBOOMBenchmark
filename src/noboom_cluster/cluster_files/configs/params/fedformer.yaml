@@ -1,0 +1,62 @@
+search_space:
+  model:
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+    network:
+      modes:
+        distribution: int
+        low: 32
+        high: 64
+        step: 16
+      model_dim:
+        distribution: int
+        low: 32
+        high: 512
+        step: 32
+      dropout:
+        distribution: uniform
+        low: 0.0
+        high: 0.5
+        step: 0.1
+      num_heads:
+        distribution: categorical
+        choices: [ 8 ]
+      encoder_layers:
+        distribution: int
+        low: 2
+        high: 4
+      fft_norm:
+        distribution: categorical
+        choices: [ "forward", "ortho", "backward" ]
+      w_init:
+        distribution: categorical
+        choices: [ "randn", "random" ]
+      freq_norm_mode:
+        distribution: categorical
+        choices: [ null, "sqrt" ]
+      lrfop:
+        distribution: categorical
+        choices: [ true, false ]
+      mode_policy:
+        distribution: categorical
+        choices: [ "static","topk_batch","topk_running" ]
+      topk:
+        distribution: int
+        low: 8
+        high: 32
+        step: 8
+      shared_attention:
+        distribution: categorical
+        choices: [ true, false ]
+      scatter_freq:
+        distribution: categorical
+        choices: [ true, false ]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

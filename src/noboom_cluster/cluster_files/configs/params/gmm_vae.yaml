@@ -1,0 +1,29 @@
+search_space:
+  model:
+    network:
+      gru_hidden_dims:
+        distribution: categorical
+        choices: [[64], [64, 64]]
+      latent_dim:
+        distribution: categorical
+        choices: [8, 16, 32]
+      gmm_components:
+        distribution: int
+        low: 2
+        high: 8
+    detector:
+      num_mc_samples:
+        distribution: int
+        low: 2
+        high: 64
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

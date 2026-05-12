@@ -1,0 +1,43 @@
+model:
+  compile_torch_model: True
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: False
+  network:
+    class_path: timesead.models.reconstruction.FEDformer
+    init_args:
+      input_dim: null
+      model_dim: 256
+      dropout: 0.1
+      num_heads: 8
+      fcn_dim: null
+      encoder_layers: 3
+      modes: 32
+      fft_norm: "forward"
+      w_init: "randn"
+      freq_norm_mode: null
+      lrfop: false
+      mode_policy: "static"
+      topk: 8
+      shared_attention: false
+      scatter_freq: false
+  detector:
+    class_path: timesead.models.common.MSEReconstructionAnomalyDetector
+    init_args:
+      batch_first: True
+  losses:
+    class_path: torch.nn.MSELoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True

@@ -1,0 +1,15 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        n_components:
+          distribution: categorical
+          choices: [0.8, 0.9, 0.95, 0.99]
+        whiten:
+          distribution: categorical
+          choices: [false, true]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

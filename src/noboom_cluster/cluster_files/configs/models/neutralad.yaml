@@ -1,0 +1,57 @@
+model:
+  style_transfer_ckpt_path: noboom_lib/core/diffstylets/checkpoints/model.pth
+  use_test_style_transfer: false
+  compile_torch_model: True
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: False
+  network:
+    class_path: timesead_ext.models.other.NeutralAD
+    init_args:
+      ts_channels: null
+      num_trans: 4
+      trans_type: "residual"
+      enc_hdim: 32
+      enc_nlayers: 4
+      trans_nlayers: 4
+      latent_dim: 32
+      batch_norm: False
+      enc_bias: False
+  detector:
+    class_path: timesead_ext.models.other.NeutralADAnomalyDetector
+  losses:
+    class_path: timesead_ext.models.other.NeutralADLoss
+    init_args:
+      use_euclidean: False
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_size: 64
+  batch_dim: 0
+  test_on_org: True
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True
+#    - class_path: timesead.data.transforms.MagAddNoiseTransform
+#      init_args:
+#        magnitude: 0.01
+#        apply_prob: 1.0
+#    - class_path: timesead.data.transforms.MagScaleTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.5
+#    - class_path: timesead.data.transforms.MaskOutTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.2
+#    - class_path: timesead.data.transforms.TimeWarpTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.1

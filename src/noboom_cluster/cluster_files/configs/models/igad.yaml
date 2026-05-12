@@ -1,0 +1,38 @@
+model:
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.igad.IGAD
+    init_args:
+      window_size: null
+      input_dim: null
+      hidden_dims: [128, 64]
+      latent_dim: 32
+      dropout: 0.0
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.igad.IGADAnomalyDetector
+    init_args:
+      batch_first: True
+  losses:
+    class_path: noboom_benchmark.noboom_lib.core.models.igad.IGADLoss
+    init_args:
+      idem_weight: 0.1
+      tight_weight: 0.1
+      alpha: 1.1
+      recon_weight: 1.0
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1.0e-3
+  compile_torch_model: false
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: false
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True

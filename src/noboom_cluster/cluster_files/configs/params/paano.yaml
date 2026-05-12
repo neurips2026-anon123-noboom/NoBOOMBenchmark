@@ -1,0 +1,24 @@
+search_space:
+  model:
+    network:
+      init_args:
+        patch_size:
+          distribution: categorical
+          choices: [96]
+        projection_dim:
+          distribution: categorical
+          choices: [128, 256]
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+    detector:
+      init_args:
+        patch_size:
+          distribution: categorical
+          choices: [96]
+  window_size:
+    distribution: categorical
+    choices: [96]

@@ -1,0 +1,20 @@
+search_space:
+  model:
+    detector:
+      init_args:
+        n_trees:
+          distribution: int
+          low: 50
+          high: 200
+          step: 50
+        sample_size:
+          distribution: categorical
+          choices: ["auto", 128, 256 ]
+        feature_combinations:
+          distribution: categorical
+          choices: [ null, 1, 2]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

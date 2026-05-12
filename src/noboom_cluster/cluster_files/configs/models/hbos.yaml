@@ -1,0 +1,13 @@
+model:
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.detectors.HBOSAD
+    init_args:
+      n_bins: 10
+      alpha: 0.1
+      bin_tol: 0.5
+trainer:
+  accelerator: cpu
+  max_epochs: 0
+
+data:
+  batch_dim: 0

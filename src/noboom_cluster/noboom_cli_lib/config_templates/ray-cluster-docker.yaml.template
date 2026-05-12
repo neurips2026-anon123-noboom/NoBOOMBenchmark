@@ -1,0 +1,42 @@
+# Ray cluster configuration for Docker-based deployment of NoBoom Benchmark
+cluster_name: noboom-benchmark-docker
+
+docker:
+  image: ghcr.io/denix56/noboom:latest
+  container_name: "ray-noboom-container"
+  pull_before_run: true
+  run_options:
+    - --ulimit nofile=65536:65536
+    - --gpus=all
+    - --runtime=nvidia
+
+provider:
+  type: local
+
+auth:
+
+rsync_exclude:
+  - "**/.git"
+  - "**/.git/**"
+  - "**/*.ckpt"
+  - "**/*.csv"
+
+rsync_filter:
+  - ".gitignore"
+
+setup_commands: []
+worker_setup_commands: []
+
+head_start_ray_commands:
+  - RAY_enable_autoscaler_v2=0 ray stop --force
+
+worker_start_ray_commands:
+  - RAY_enable_autoscaler_v2=0 ray stop --force
+
+upscaling_speed: 1.0
+idle_timeout_minutes: 5
+file_mounts_sync_continuously: False
+cluster_synced_files: []
+
+max_workers: 0
+min_workers: 0

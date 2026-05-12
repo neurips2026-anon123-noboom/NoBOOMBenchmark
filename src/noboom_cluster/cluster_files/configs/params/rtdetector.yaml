@@ -1,0 +1,18 @@
+search_space:
+  model:
+    network:
+      init_args:
+        dropout:
+          distribution: uniform
+          low: 0.0
+          high: 0.3
+          step: 0.1
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [10, 20]

@@ -1,0 +1,35 @@
+search_space:
+  model:
+    network:
+      init_args:
+        hidden_dim:
+          distribution: categorical
+          choices: [128, 256]
+        num_layers:
+          distribution: int
+          low: 1
+          high: 2
+          step: 1
+        heads:
+          distribution: categorical
+          choices: [4]
+        tau:
+          distribution: categorical
+          choices: [2]
+        dropout:
+          distribution: uniform
+          low: 0.0
+          high: 0.3
+          step: 0.1
+        ema_momentum:
+          distribution: categorical
+          choices: [0.5]
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [100]

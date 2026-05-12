@@ -1,0 +1,18 @@
+search_space:
+  model:
+    network:
+      init_args:
+        e_layers:
+          distribution: int
+          low: 2
+          high: 4
+          step: 1
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [64, 100, 128]

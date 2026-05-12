@@ -1,0 +1,81 @@
+services:
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: noboom-seaweedfs
+    network_mode: host
+    env_file:
+      - ${NOBOOM_DOCKER_WORKDIR_HOST}/mnt/.env
+    command: >
+      server
+      -ip=${HEAD_LOCAL_IP}
+      -master.port=9333
+      -volume.port=8080
+      -filer
+      -filer.port=8888
+      -s3
+      -s3.port=8333
+      -s3.config=/workspace/seaweedfs/s3.json
+      -dir=/data
+    volumes:
+      - ${NOBOOM_STORAGE}/seaweedfs:/data
+      - ${NOBOOM_ROOT_DIR}/s3.json:/workspace/seaweedfs/s3.json:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://${HEAD_LOCAL_IP}:8333/status" ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  postgres:
+    image: ${NOBOOM_POSTGRES_IMAGE:-ghcr.io/denix56/noboom_db:latest}
+    container_name: noboom-postgres
+    restart: unless-stopped
+    env_file:
+      - ${NOBOOM_DOCKER_WORKDIR_HOST}/mnt/.env
+    network_mode: host
+    volumes:
+      - ${NOBOOM_ROOT_DIR}/postgres:/var/lib/postgresql/
+      - ${NOBOOM_ROOT_DIR}/scripts/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command:
+      - -i
+      - -c
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+      - -c
+      - "shared_buffers=4GB"
+      - -c
+      - "work_mem=64MB"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  mlflow:
+    image: ${NOBOOM_MLFLOW_IMAGE:-ghcr.io/denix56/noboom_mlflow:latest}
+    container_name: noboom-mlflow
+    restart: unless-stopped
+    env_file:
+      - ${NOBOOM_DOCKER_WORKDIR_HOST}/mnt/.env
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    tmpfs:
+      - /mlruns:rw,noexec,nosuid,size=4g
+    command:
+      - mlflow
+      - server
+      - --backend-store-uri
+      - ${MLFLOW_STORAGE_URI}
+      - --default-artifact-root
+      - s3://${NOBOOM_S3_BUCKET}/${NOBOOM_S3_PREFIX}/artifacts
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --serve-artifacts
+      - --allowed-hosts
+      - ${HEAD_LOCAL_IP}:5000,127.0.0.1:5000,127.0.0.1:${MLFLOW_UI_LOCAL_PORT},localhost

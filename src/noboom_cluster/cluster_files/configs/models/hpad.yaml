@@ -1,0 +1,54 @@
+model:
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.hpad.HPAD
+    init_args:
+      window_size: null
+      input_dim: null
+      model_dim: 256
+      dropout: 0.1
+      num_heads: 8
+      fcn_dim: null
+      encoder_layers: 3
+      modes: 32
+      fft_norm: "forward"
+      w_init: "randn"
+      freq_norm_mode: null
+      lrfop: false
+      mode_policy: "static"
+      topk: 8
+      shared_attention: false
+      scatter_freq: false
+      patch_scales: [1, 2, 4]
+      num_patch_prototypes: 16
+      top_k_periods: 3
+      num_period_prototypes: 8
+      prototype_dim: null
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.hpad.HPADAnomalyDetector
+    init_args:
+      beta: 1.0
+  losses:
+    class_path: noboom_benchmark.noboom_lib.core.models.hpad.HPADLoss
+    init_args:
+      lambda_rec: 1.0
+      lambda_patch: 1.0
+      lambda_ent: 0.01
+      lambda_period: 1.0
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+  compile_torch_model: true
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: false
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True

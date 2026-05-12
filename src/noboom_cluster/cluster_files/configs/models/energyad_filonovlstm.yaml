@@ -1,0 +1,53 @@
+model:
+  compile_torch_model: False
+  network:
+    class_path: timesead.models.prediction.LSTMS2SPrediction
+    init_args:
+      input_dim: null
+      lstm_hidden_dims: [128, 64]
+      linear_hidden_layers: [64]
+      dropout: 0.1
+  detector:
+    class_path: timesead.models.other.EnergyAD_AnomalyDetector
+    init_args:
+      batch_first: True
+  losses:
+    class_path: torch.nn.SmoothL1Loss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.FiniteDifferencesTargetTransform
+      init_args:
+        replace_labels: True
+#    - class_path: timesead.data.transforms.MagAddNoiseTransform
+#      init_args:
+#        magnitude: 0.01
+#        apply_prob: 1.0
+#    - class_path: timesead.data.transforms.MagScaleTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.5
+#    - class_path: timesead.data.transforms.MaskOutTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.2
+#    - class_path: timesead.data.transforms.TimeWarpTransform
+#      init_args:
+#        magnitude: 0.02
+#        apply_prob: 0.1
+  val_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.FiniteDifferencesTargetTransform
+      init_args:
+        replace_labels: True

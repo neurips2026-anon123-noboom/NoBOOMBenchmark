@@ -1,0 +1,24 @@
+search_space:
+  model:
+    network:
+      lstm_hidden_dims:
+        distribution: categorical
+        choices: [[30, 30], [50, 50]]
+      linear_hidden_layers:
+        distribution: categorical
+        choices: [[40], [20, 20]]
+      prediction_horizon:
+        distribution: int
+        low: 1
+        high: 5
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

@@ -1,0 +1,62 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: |
+          uv export --locked --no-hashes --extra benchmark --extra test --format requirements-txt --output-file ci-requirements.txt >/dev/null
+          uv venv
+          source .venv/bin/activate
+          uv pip sync --torch-backend cpu ci-requirements.txt
+          rm ci-requirements.txt
+
+      - name: Ruff
+        run: |
+          uv run ruff check \
+            src/noboom_cluster/cli.py \
+            src/noboom_cluster/noboom_cli_lib/dependency_resolver.py \
+            src/noboom_cluster/noboom_cli_lib/deployment.py \
+            src/noboom_cluster/noboom_cli_lib/ray_lifecycle.py \
+            src/noboom_cluster/noboom_cli_lib/runtime_bundle.py \
+            src/noboom_cluster/noboom_cli_lib/settings.py \
+            src/noboom_cluster/noboom_cli_lib/specs.py \
+            src/noboom_benchmark/run_tune.py \
+            src/noboom_benchmark/tuning_workflow.py \
+            src/noboom_benchmark/noboom_lib/core/config/runtime.py \
+            src/noboom_benchmark/noboom_lib/core/tune/cache_service.py \
+            src/noboom_benchmark/noboom_lib/core/tune/callbacks.py \
+            src/noboom_benchmark/noboom_lib/core/tune/job_submission.py \
+            src/noboom_benchmark/noboom_lib/core/tune/mlflow_utils.py \
+            src/noboom_benchmark/noboom_lib/core/tune/orchestration.py \
+            src/noboom_benchmark/noboom_lib/core/tune/pair_execution.py \
+            tests/test_control_plane_specs.py \
+            tests/test_runtime_bundle_rendering.py \
+            tests/test_pair_job_controller.py
+
+      - name: Compile Smoke Test
+        run: |
+          uv run python -m compileall src
+
+      - name: Run tests
+        run: |
+          uv run pytest

@@ -1,0 +1,77 @@
+search_space:
+  model:
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+    network:
+      init_args:
+        n_transformations:
+          distribution: int
+          low: 3
+          high: 8
+          step: 1
+        hidden_dim:
+          distribution: int
+          low: 64
+          high: 256
+          step: 64
+        latent_dim:
+          distribution: int
+          low: 32
+          high: 128
+          step: 32
+        transformation_type:
+          distribution: categorical
+          choices: ["residual", "feedforward", "multiplicative"]
+        encoder_type:
+          distribution: categorical
+          choices: ["cnn", "modern_tcn", "sensorformer_time"]
+        encoder_cfg:
+          d_model:
+            distribution: categorical
+            choices: [64, 128]
+          dropout:
+            distribution: categorical
+            choices: [0.0, 0.1, 0.25]
+          patch_len:
+            distribution: categorical
+            choices: [8, 16]
+          patch_stride:
+            distribution: categorical
+            choices: [4, 8]
+          num_heads:
+            distribution: categorical
+            choices: [4, 8]
+          d_ff:
+            distribution: categorical
+            choices: [128, 256]
+          kernel_sizes:
+            distribution: categorical
+            choices:
+              - [5, 5, 9, 9]
+              - [7, 7, 15, 15]
+          dilations:
+            distribution: categorical
+            choices:
+              - [1, 1, 2, 4]
+              - [1, 2, 4, 8]
+          ff_mult:
+            distribution: categorical
+            choices: [2, 4]
+        transform_cfg:
+          hidden_dim:
+            distribution: int
+            low: 64
+            high: 256
+            step: 64
+          dropout:
+            distribution: categorical
+            choices: [0.0, 0.1, 0.25]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

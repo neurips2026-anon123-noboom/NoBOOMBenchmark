@@ -1,0 +1,37 @@
+search_space:
+  model:
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-5
+          high: 1e-2
+    network:
+      dropout:
+        distribution: uniform
+        low: 0.0
+        high: 0.5
+      model_dim:
+        distribution: categorical
+        choices: [ 16, 32, 64, 128]
+      num_heads:
+        distribution: categorical
+        choices: [ 4, 8]
+      fcn_dim:
+        distribution: categorical
+        choices: [ 32, 64, 128, 256 ]
+      encoder_layers:
+        distribution: int
+        low: 1
+        high: 3
+        step: 1
+      modes: 
+        distribution: int
+        low: 32
+        high: 64
+        step: 16
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

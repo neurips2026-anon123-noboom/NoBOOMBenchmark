@@ -1,0 +1,74 @@
+cluster_name: {{ cluster_name | tojson }}
+
+docker:
+  image: {{ docker_image | tojson }}
+  container_name: "ray-noboom-container"
+  pull_before_run: true
+  run_options:
+{% for option in docker_run_options %}
+    - {{ option | tojson }}
+{% endfor %}
+
+provider:
+  type: local
+  head_ip: {{ head_ip | tojson }}
+{% if worker_ips %}
+  worker_ips:
+{% for ip in worker_ips %}
+    - {{ ip | tojson }}
+{% endfor %}
+{% else %}
+  worker_ips: []
+{% endif %}
+  external_head_ip: {{ external_head_ip | tojson }}
+
+auth:
+  ssh_user: {{ ssh_user | tojson }}
+  ssh_private_key: {{ ssh_private_key | tojson }}
+
+rsync_exclude:
+  - "**/.git"
+  - "**/.git/**"
+  - "**/*.ckpt"
+  - "**/*.csv"
+
+rsync_filter:
+  - ".gitignore"
+
+setup_commands:
+{% for command in setup_commands %}
+  - {{ command | tojson }}
+{% endfor %}
+
+worker_setup_commands: []
+
+head_start_ray_commands:
+{% for command in head_start_ray_commands %}
+  - {{ command | tojson }}
+{% endfor %}
+
+worker_start_ray_commands:
+{% for command in worker_start_ray_commands %}
+  - {{ command | tojson }}
+{% endfor %}
+
+upscaling_speed: 1.0
+idle_timeout_minutes: 5
+file_mounts_sync_continuously: false
+cluster_synced_files: []
+max_workers: {{ max_workers }}
+min_workers: {{ min_workers }}
+
+file_mounts:
+  {{ auth_token_remote_path | tojson }}: {{ auth_token_local_path | tojson }}
+  {{ workdir_mount_remote_path | tojson }}: {{ mount_files_local_path | tojson }}
+
+head_setup_commands:
+{% for command in head_setup_commands %}
+  - {{ command | tojson }}
+{% endfor %}
+
+initialization_commands:
+{% for command in initialization_commands %}
+  - {{ command | tojson }}
+{% endfor %}

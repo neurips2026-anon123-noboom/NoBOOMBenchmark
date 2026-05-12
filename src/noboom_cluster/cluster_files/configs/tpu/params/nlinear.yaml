@@ -1,0 +1,15 @@
+search_space:
+  model:
+    network:
+      init_args:
+        individual:
+          distribution: categorical
+          choices: [false]
+    optimizer:
+      init_args:
+        lr:
+          distribution: categorical
+          choices: [1.0e-3]
+  window_size:
+    distribution: categorical
+    choices: [16]

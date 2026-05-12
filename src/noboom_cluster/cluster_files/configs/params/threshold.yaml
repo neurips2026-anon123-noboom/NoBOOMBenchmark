@@ -1,0 +1,23 @@
+search_space:
+  use_mean:
+    distribution: categorical
+    choices: [0, 1]
+  std_coefficient:
+    distribution: int
+    low: 1
+    high: 4
+    step: 1
+  offset:
+    distribution: categorical
+    choices: ["unique"]
+  order:
+    distribution: categorical
+    choices: [0,1]
+  two_sided:
+    distribution: categorical
+    choices: [True, False]
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

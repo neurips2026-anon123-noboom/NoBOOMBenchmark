@@ -1,0 +1,7 @@
+use_mean: 1
+std_coefficient: 1.0
+offset: [null]
+order: 0
+two_sided: False
+data:
+  batch_dim: 0

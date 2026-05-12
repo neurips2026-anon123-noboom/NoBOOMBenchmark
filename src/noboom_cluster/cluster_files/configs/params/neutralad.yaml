@@ -1,0 +1,58 @@
+search_space:
+  model:
+    optimizer:
+      init_args:
+        lr:
+          distribution: categorical
+          choices: [0.0005323099606209218]
+    network:
+      num_trans:
+        distribution: categorical
+        choices: [10]
+      trans_type:
+        distribution: categorical
+        choices: ["residual"]
+      enc_hdim:
+        distribution: categorical
+        choices: [128]
+      enc_nlayers:
+        distribution: categorical
+        choices: [3]
+      trans_nlayers:
+        distribution: categorical
+        choices: [3]
+      latent_dim:
+        distribution: categorical
+        choices: [32]
+      batch_norm:
+        distribution: categorical
+        choices: [false]
+      enc_bias:
+        distribution: categorical
+        choices: [false]
+      use_invertible_transforms:
+        distribution: categorical
+        choices: [true]
+      use_group_transforms:
+        distribution: categorical
+        choices: [true]
+      use_freq_ortho_transforms:
+        distribution: categorical
+        choices: [true]
+      encoder_type:
+        distribution: categorical
+        choices: ["base"]
+      pooling:
+        distribution: categorical
+        choices: ["base"]
+      proj_head:
+        distribution: categorical
+        choices: ["linear"]
+    losses:
+      init_args:
+        use_euclidean:
+          distribution: categorical
+          choices: [true]
+  window_size:
+    distribution: categorical
+    choices: [128]

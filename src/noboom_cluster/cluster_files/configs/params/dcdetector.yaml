@@ -1,0 +1,27 @@
+search_space:
+  model:
+    network:
+      init_args:
+        d_model:
+          distribution: categorical
+          choices: [128, 256]
+        e_layers:
+          distribution: int
+          low: 2
+          high: 4
+          step: 1
+        patch_size:
+          distribution: categorical
+          # Every window_size choice must be divisible by every patch_size element; lcm(5,8)=40, so window sizes must be multiples of 40.
+          choices:
+            - [5]
+            - [8]
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-3
+  window_size:
+    distribution: categorical
+    choices: [80, 120, 160]

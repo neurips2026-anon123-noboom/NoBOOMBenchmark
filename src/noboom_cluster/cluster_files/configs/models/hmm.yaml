@@ -1,0 +1,17 @@
+model:
+  detector:
+    class_path: timesead.models.baselines.HMMAnomalyDetector
+    init_args:
+      n_components: 4
+      covariance_type: "diag"
+      n_iter: 100
+      tol: 1e-2
+      min_covar: 1e-3
+      random_state: 42
+      batch_first: True
+trainer:
+  accelerator: cpu
+  max_epochs: 0
+
+data:
+  batch_dim: 0

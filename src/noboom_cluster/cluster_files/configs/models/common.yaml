@@ -1,0 +1,69 @@
+seed_everything: 42
+window_size: 128
+model:
+  verbose: True
+  evaluation_postprocessing:
+    enabled: false
+    short_window: 5
+    long_ewma_span: 25
+    hysteresis_delta_mad: 0.5
+    enter_consecutive: 2
+    exit_consecutive: 3
+    merge_gap: 3
+    min_event_length: 2
+trainer:
+  detect_anomaly: False
+  deterministic: False
+  benchmark: True
+  precision: 32
+  accelerator: auto
+  devices: auto
+  max_epochs: 100
+  num_sanity_val_steps: 0
+  check_val_every_n_epoch: 3
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.ModelSummary
+      init_args:
+        max_depth: -1
+    - class_path: lightning.pytorch.callbacks.EarlyStopping
+      init_args:
+        monitor: val_loss
+        patience: 5
+        min_delta: 1e-4
+        mode: min
+    - class_path: lightning.pytorch.callbacks.LearningRateMonitor
+  logger:
+      class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.loggers.mlflow.MLFlowLogger
+      init_args:
+        log_model: True
+data:
+  data_manifest_path: null
+  batch_size: 128
+  num_workers: 2
+  splits: [0.7, 0.3]
+  batch_dim: 0
+  scaler:
+    class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.data_transform.MixedRobustPreprocessor
+    init_args:
+      enable_zero_inflated: True
+      enable_asinh: True
+      use_robust_scaling: False
+      extreme_action: "ffill"
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True
+  val_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True
+  test_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null

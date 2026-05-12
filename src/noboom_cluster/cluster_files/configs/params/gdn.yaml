@@ -1,0 +1,26 @@
+search_space:
+  model:
+    network:
+      dim:
+        distribution: categorical
+        choices: [32, 64]
+      out_layer_hidden_dims:
+        distribution: categorical
+        choices: [[64], [64, 64]]
+      topk:
+        distribution: categorical
+        choices: [15]
+      dropout_prob:
+        distribution: categorical
+        choices: [ 0.1 ]
+    optimizer:
+      init_args:
+        lr:
+          distribution: loguniform
+          low: 1e-4
+          high: 1e-2
+  window_size:
+    distribution: int
+    low: 8
+    high: 128
+    step: 10

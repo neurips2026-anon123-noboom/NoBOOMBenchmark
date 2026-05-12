@@ -1,0 +1,81 @@
+services:
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: noboom-seaweedfs
+    network_mode: host
+    env_file:
+      - {{ env_file_path | tojson }}
+    command: >
+      server
+      -ip={{ head_local_ip }}
+      -master.port=9333
+      -volume.port=8080
+      -filer
+      -filer.port=8888
+      -s3
+      -s3.port=8333
+      -s3.config=/workspace/seaweedfs/s3.json
+      -dir=/data
+    volumes:
+      - {{ (seaweed_data_path ~ ":/data") | tojson }}
+      - {{ (s3_config_host_path ~ ":/workspace/seaweedfs/s3.json:ro") | tojson }}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://{{ head_local_ip }}:8333/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  postgres:
+    image: ${NOBOOM_POSTGRES_IMAGE:-ghcr.io/denix56/noboom_db:latest}
+    container_name: noboom-postgres
+    restart: unless-stopped
+    env_file:
+      - {{ env_file_path | tojson }}
+    network_mode: host
+    volumes:
+      - {{ (postgres_data_path ~ ":/var/lib/postgresql/") | tojson }}
+      - {{ (pg_hba_host_path ~ ":/etc/postgresql/pg_hba.conf:ro") | tojson }}
+    command:
+      - -i
+      - -c
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+      - -c
+      - "shared_buffers=4GB"
+      - -c
+      - "work_mem=64MB"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  mlflow:
+    image: ${NOBOOM_MLFLOW_IMAGE:-ghcr.io/denix56/noboom_mlflow:latest}
+    container_name: noboom-mlflow
+    restart: unless-stopped
+    env_file:
+      - {{ env_file_path | tojson }}
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    tmpfs:
+      - /mlruns:rw,noexec,nosuid,size=4g
+    command:
+      - mlflow
+      - server
+      - --backend-store-uri
+      - ${MLFLOW_STORAGE_URI}
+      - --default-artifact-root
+      - s3://{{ nooboom_s3_bucket }}/{{ nooboom_s3_prefix }}/artifacts
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --serve-artifacts
+      - --allowed-hosts
+      - {{ allowed_hosts | tojson }}

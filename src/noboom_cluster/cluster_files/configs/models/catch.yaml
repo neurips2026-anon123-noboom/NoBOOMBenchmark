@@ -1,0 +1,94 @@
+model:
+  predict_on_end: true
+  prediction_stream:
+    class_path: noboom_benchmark.noboom_lib.core.benchmark_utils.prediction_stream.CatchMinimalLegacyTailPredictionStream
+    init_args:
+      chunk_size: 8192
+  compile_torch_model: false
+  compile_torch_model_mode: default
+  compile_torch_model_fullgraph: false
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.catch.CATCH
+    init_args:
+      input_dim: null
+      seq_len: null
+      Mlr: 1.0e-5
+      e_layers: 2
+      n_heads: 2
+      cf_dim: 64
+      d_ff: 256
+      d_model: 64
+      head_dim: 64
+      individual: 0
+      dropout: 0.2
+      head_dropout: 0.1
+      auxi_loss: MAE
+      auxi_type: complex
+      auxi_mode: fft
+      regular_lambda: 0.5
+      temperature: 0.07
+      patch_stride: 8
+      patch_size: 16
+      inference_patch_stride: 1
+      inference_patch_size: 32
+      module_first: true
+      mask: false
+      pct_start: 0.3
+      revin: 1
+      affine: 0
+      subtract_last: 0
+      lradj: type1
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.catch.CATCHAnomalyDetector
+    init_args:
+      seq_len: null
+      batch_size: 64
+      score_lambda: 0.05
+      inference_patch_stride: 1
+      inference_patch_size: 32
+      auxi_loss: MAE
+      auxi_type: complex
+      auxi_mode: fft
+      module_first: true
+      mask: false
+  losses:
+    class_path: noboom_benchmark.noboom_lib.core.models.catch.CATCHLoss
+    init_args:
+      auxi_loss: MAE
+      auxi_type: complex
+      auxi_mode: fft
+      auxi_lambda: 0.005
+      dc_lambda: 0.005
+      module_first: true
+      mask: false
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1.0e-4
+trainer:
+  max_epochs: 25
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  batch_size: 16
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  val_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  test_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: false

@@ -1,0 +1,46 @@
+model:
+  network:
+    class_path: noboom_benchmark.noboom_lib.core.models.rtdetector.RTdetector
+    init_args:
+      feats: null
+      window_size: null
+      dropout: 0.1
+  detector:
+    class_path: noboom_benchmark.noboom_lib.core.models.rtdetector.RTdetectorAnomalyDetector
+  losses:
+    class_path: noboom_benchmark.noboom_lib.core.models.rtdetector.RTdetectorLoss
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 0.001
+      weight_decay: 1.0e-5
+  compile_torch_model: true
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: false
+trainer:
+  precision: bf16-mixed
+  max_epochs: 25
+data:
+  batch_dim: 0
+  batch_size: 128
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  val_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: true
+  test_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: false

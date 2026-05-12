@@ -1,0 +1,58 @@
+model:
+  compile_torch_model: True
+  compile_torch_model_mode: max-autotune-no-cudagraphs
+  compile_torch_model_fullgraph: False
+  network:
+    class_path: timesead_ext.models.other.LNT
+    init_args:
+      ts_channels: null
+      seq_len: null
+      n_transformations: 6
+      hidden_dim: 128
+      latent_dim: 64
+      transformation_type: "residual"
+      encoder_type: "sensorformer_time"
+      encoder_cfg:
+        d_model: 128
+        dropout: 0.1
+        patch_len: 16
+        patch_stride: 8
+        num_heads: 4
+        d_ff: 256
+        global_patches: 16
+        attention_chunk_size: null
+        kernel_sizes: [7, 7, 15, 15]
+        dilations: [1, 2, 4, 8]
+        ff_mult: 4
+        enc_hidden: 128
+        gru_hidden: 128
+        strides: [5, 4, 2, 2, 2]
+        filters: [10, 8, 4, 4, 4]
+        padding: [2, 2, 2, 2, 1]
+        upsampler: "linear"
+        upsample_chunk_size: 8
+        upsample_chunk_threshold: 1024
+      transform_cfg:
+        hidden_dim: 128
+        dropout: 0.1
+  detector:
+    class_path: timesead_ext.models.other.LNTAnomalyDetector
+  losses:
+    class_path: timesead_ext.models.other.LNTLoss
+    init_args:
+      temperature: 0.5
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-3
+trainer:
+  precision: bf16-mixed
+data:
+  batch_dim: 0
+  train_transform:
+    - class_path: timesead.data.transforms.WindowTransformIfNotWindow
+      init_args:
+        window_size: null
+    - class_path: timesead.data.transforms.ReconstructionTargetTransform
+      init_args:
+        replace_labels: True

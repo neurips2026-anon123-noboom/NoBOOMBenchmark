@@ -1,0 +1,29 @@
+# Ray cluster configuration for non-docker deployments of NoBoom Benchmark
+cluster_name: noboom-benchmark-native
+
+provider:
+  type: local
+
+auth:
+
+rsync_exclude:
+  - "**/.git"
+  - "**/.git/**"
+  - "**/*.ckpt"
+  - "**/*.csv"
+
+rsync_filter:
+  - ".gitignore"
+
+upscaling_speed: 1.0
+idle_timeout_minutes: 5
+file_mounts_sync_continuously: False
+
+setup_commands: []
+worker_setup_commands: []
+
+head_start_ray_commands:
+  - ray stop --force
+
+worker_start_ray_commands:
+  - ray stop --force

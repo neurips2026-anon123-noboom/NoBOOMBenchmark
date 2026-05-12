@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.sqlite3
+*.db
+.env
+Dockerfile
+README.md
+.dockerignore
+build_push.py
+deploy_jarvis.py
